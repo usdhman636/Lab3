@@ -30,7 +30,7 @@ void save_array(const char *filename, const int *arr, int n) {
 /* ---------- READ FROM STDIN ---------- */
 int read_input(int *arr) {
     int n = 0;
-    printf("Enter numbers separated by space (Ctrl+D to finish):\n");
+    printf("Введите числа, разделенные пробелом. (Ctrl+D чтобы завершить):\n");
 
     while (n < MAX_INPUT && scanf("%d", &arr[n]) == 1) {
         n++;
@@ -45,7 +45,7 @@ int read_input(int *arr) {
 int read_file(const char *filename, int *arr) {
     FILE *f = fopen(filename, "r");
     if (!f) {
-        perror("File open failed");
+        printf("открытие файла не удалось");
         return -1;
     }
 
@@ -69,14 +69,14 @@ int IO(int argc, char *argv[]) {
         n = read_input(arr);
     } else {
         n = read_file("unsorted.txt", arr);
-        printf("\nPrevious array:\n");
+        printf("\nпредыдущий массив:\n");
         for (int i = 0; i < n; i++) {
             printf("%d ", arr[i]);
         }
         printf("\n\n");
 
         n = read_file("sorted.txt", arr);
-        printf("Previous sorted array:\n");
+        printf("предыдущий отсортированный массив:\n");
         for (int i = 0; i < n; i++) {
             printf("%d ", arr[i]);
         }
@@ -87,7 +87,7 @@ int IO(int argc, char *argv[]) {
     }
 
     if (n == 0) {
-        printf("No data provided.\n");
+        printf("Данные не предоставлены.\n");
         return 0;
     }
 
@@ -113,17 +113,17 @@ int IO(int argc, char *argv[]) {
 
     /* ---------- OUTPUT ---------- */
     if (argc == 1) {
-        printf("\nSorted numbers:\n");
+        printf("\nотсортированные числа:\n");
         for (int i = 0; i < n; i++) {
             printf("%d ", sorted[i]);
         }
         printf("\n\n");
 
-        printf("Insertion sort time: %.6f s\n", t_ins);
-        printf("Merge sort time:     %.6f s\n", t_mer);
+        printf("Время сортировки вставки: %.6f s\n", t_ins);
+        printf("Время сортировки при слиянии: %.6f s\n", t_mer);
 
         /* ---------- REPEAT ---------- */
-        printf("\nRepeat? (y/n): ");
+        printf("\nповторить?? (y/n): ");
         //clear_input_buffer();
         char c;
         scanf("%c", &c);
@@ -132,11 +132,11 @@ int IO(int argc, char *argv[]) {
             return IO(argc, argv);
         }
     } else {
-        printf("Sorted array from file:\n");
+        printf("отсортированный массив из файла:\n");
         for (int i = 0; i < n; i++) {
             printf("%d ", sorted[i]);
         }
-        printf("\nnumber of elements[%d]\ninsertion time is [%.6f] merge time is [%.6f]\n",
+        printf("\количество элементов[%d]\nвремя вставки составляет [%.6f] Время слияния составляет [%.6f]\n",
                n, t_ins, t_mer);
     }
 
