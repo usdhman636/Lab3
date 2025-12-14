@@ -1,0 +1,36 @@
+nimber of elements[10]
+insertion time is [0.000007] merge time is [0.000110]
+
+
+number of elements[50]
+insertion time is [0.000029] merge time is [0.000091]   
+
+
+number of elements[100]                                 
+insertion time is [0.000009] merge time is [0.000236]
+
+
+number of elements[1000]                                
+insertion time is [0.000135] merge time is [0.000287]
+
+
+number of elements[5000]                                
+insertion time is [0.003165] merge time is [0.000919]
+
+
+number of elements[10000]                               
+insertion time is [0.012763] merge time is [0.001658]
+
+
+Из проведённых тестов видно, что сортировка вставками 
+работает лучше на небольших наборах данных, но при 
+увеличении числа элементов её скорость сильно падает. 
+Сортировка слиянием же остаётся быстрой даже на 
+больших объёмах данных.
+
+Временная сложность:
+
+Сортировка вставками (Insertion Sort): O(n²)
+
+Сортировка слиянием (Merge Sort): O(n log n)
+
