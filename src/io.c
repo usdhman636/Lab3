@@ -136,7 +136,7 @@ int IO(int argc, char *argv[]) {
         for (int i = 0; i < n; i++) {
             printf("%d ", sorted[i]);
         }
-        printf("\n%d insertion time is [%.6f] merge time is [%.6f]\n",
+        printf("\nnumber of elements[%d]\ninsertion time is [%.6f] merge time is [%.6f]\n",
                n, t_ins, t_mer);
     }
 
