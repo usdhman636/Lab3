@@ -1,2 +1,5 @@
 *.o
+run
 program
+sorted.txt
+unsorted.txt
