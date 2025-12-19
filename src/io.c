@@ -16,7 +16,7 @@ void clear_input_buffer(void) {
 }
 
 /* ---------- SAVE ARRAY ---------- */
-void save_array(const char *filename, int *arr, int n) {
+void save_array(const char *filename,const int *arr, int n) {
     FILE *f = fopen(filename, "w");
     if (!f) return;
 

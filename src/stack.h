@@ -7,10 +7,10 @@ typedef struct {
     int capacity;
 } Stack;
 
-int stack_init(Stack *s);
+int stack_init(Stack *s, int capacity);
 void stack_free(Stack *s);
 int stack_push(Stack *s, int value);
 int stack_pop(Stack *s, int *value);
-int stack_is_empty(const Stack *s);
+int stack_is_empty(Stack *s);
 
 #endif
