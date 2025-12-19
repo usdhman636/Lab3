@@ -1,15 +1,16 @@
 #ifndef STACK_H
 #define STACK_H
 
-#define MAX_STACK 100000
-
 typedef struct {
-    int data[MAX_STACK];
+    int *data;
     int top;
+    int capacity;
 } Stack;
 
-void stack_init(Stack *s);
-void stack_push(Stack *s, int value);
-int stack_pop(Stack *s);
+int stack_init(Stack *s);
+void stack_free(Stack *s);
+int stack_push(Stack *s, int value);
+int stack_pop(Stack *s, int *value);
+int stack_is_empty(const Stack *s);
 
 #endif
