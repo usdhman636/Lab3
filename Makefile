@@ -11,3 +11,6 @@ src/%.o: src/%.c
 
 clean:
 	rm -f src/*.o run
+
+run: program
+	./run
