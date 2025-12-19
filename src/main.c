@@ -7,7 +7,7 @@
 #include "timer.h"
 #include "io.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char **argv) {
 
     IO(argc, argv);
 
