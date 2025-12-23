@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+//#include <windows.h>
 
 #include "io.h"
 #include "stack.h"
@@ -84,6 +85,8 @@ int read_file(const char *filename, int **arr) {
 
 /* ---------- MAIN I/O FUNCTION ---------- */
 int IO(int argc, char *argv[]) {
+
+    //SetConsoleOutputCP(CP_UTF8);
 
     int *arr = NULL;
     int n = 0;
