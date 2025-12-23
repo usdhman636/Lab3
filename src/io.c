@@ -115,9 +115,9 @@ int IO(int argc, char *argv[]) {
     }
 
     if (n == 0) {
-        printf("Данные не предоставлены.\n");
+        printf("Данные не предоставлены.\n\n");
         free(arr);
-        return 0;
+        return IO(argc, argv);
     }
 
     /* ---------- SAVE ORIGINAL ---------- */
