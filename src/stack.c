@@ -3,7 +3,7 @@
 
 #define INITIAL_CAPACITY 10
 
-int stack_init(Stack *s) {
+int stack_init(Stack *s, int capacity) {
     s->capacity = INITIAL_CAPACITY;
     s->top = 0;
 
