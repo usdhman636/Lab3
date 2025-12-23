@@ -4,7 +4,7 @@
 #define INITIAL_CAPACITY 10
 
 int stack_init(Stack *s, int capacity) {
-    s->capacity = INITIAL_CAPACITY;
+    s->capacity = capacity;
     s->top = 0;
 
     s->data = malloc(s->capacity * sizeof(int));
