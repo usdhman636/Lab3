@@ -1,12 +1,18 @@
 #ifndef IO_H
 #define IO_H
 
-void save_array(const char *filename, const int *arr, int n);
+#include "stack.h"
 
-int read_input(int **arr);
+// Read from stdin into stack
+int read_input(Stack *s);
 
-int read_file(const char *filename,  int **arr);
+// Read numbers from file into stack
+int read_file(const char *filename, Stack *s);
 
-int IO(int argc, char **argv);
+// Save stack to file
+void save_stack(const char *filename, Stack *s);
+
+// Main IO logic
+int IO(int argc, char *argv[]);
 
 #endif

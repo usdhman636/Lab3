@@ -1,7 +1,12 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-double measure_insertion(const int *arr, int n);
-double measure_merge(const int *arr, int n);
+#include "stack.h"
+
+// Measure insertion sort time
+double measure_insertion(Stack *s);
+
+// Measure merge sort time
+double measure_merge(Stack *s);
 
 #endif

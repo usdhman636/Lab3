@@ -1,187 +1,140 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 //#include <windows.h>
-
 #include "io.h"
 #include "stack.h"
 #include "sort.h"
 #include "timer.h"
 
-#define INITIAL_CAPACITY 10
-
-/* ---------- CLEAR INPUT BUFFER ---------- */
 void clear_input_buffer(void) {
     int ch;
     while ((ch = getchar()) != '\n' && ch != EOF);
 }
 
-/* ---------- SAVE ARRAY ---------- */
-void save_array(const char *filename,const int *arr, int n) {
+int read_input(Stack *s) {
+    int val;
+    printf("Введите числа через пробел (Ctrl+D чтобы закончить):\n");
+    while (scanf("%d", &val) == 1) {
+        stack_push(s, val);
+    }
+    clear_input_buffer();
+    return 0;
+}
+
+int read_file(const char *filename, Stack *s) {
+    FILE *f = fopen(filename, "r");
+    if (!f) {
+        printf("Не удалось открыть файл %s\n", filename);
+        return -1;
+    }
+    int val;
+    while (fscanf(f, "%d", &val) == 1) {
+        stack_push(s, val);
+    }
+    fclose(f);
+    return 0;
+}
+
+void save_stack(const char *filename, Stack *s) {
     FILE *f = fopen(filename, "w");
     if (!f) return;
 
-    for (int i = 0; i < n; i++) {
-        fprintf(f, "%d ", *(arr + i));
+    Stack tmp;
+    stack_init(&tmp);
+
+    while (!stack_is_empty(s)) {
+        int val = stack_pop(s);
+        fprintf(f, "%d ", val);
+        stack_push(&tmp, val);
+    }
+
+    while (!stack_is_empty(&tmp)) {
+        stack_push(s, stack_pop(&tmp));
     }
 
     fclose(f);
 }
 
-/* ---------- READ FROM STDIN ---------- */
-int read_input(int **arr) {
-    int capacity = INITIAL_CAPACITY;
-    int n = 0;
-
-    *arr = malloc(capacity * sizeof(int));
-    if (!*arr) return -1;
-
-    printf("Введите числа, разделенные пробелом. (Ctrl+D чтобы завершить):\n");
-
-    int temp;
-    while (scanf("%d", &temp) == 1) {
-        if (n >= capacity) {
-            capacity *= 2;
-            int *tmp = realloc(*arr, capacity * sizeof(int));
-            if (!tmp) return -1;
-            *arr = tmp;
-        }
-        *(*arr + n) = temp;
-        n++;
-    }
-
-    clear_input_buffer();
-    return n;
-}
-
-/* ---------- READ FROM FILE ---------- */
-int read_file(const char *filename, int **arr) {
-    FILE *f = fopen(filename, "r");
-    if (!f) {
-        printf("открытие файла не удалось\n");
-        return -1;
-    }
-
-    int capacity = INITIAL_CAPACITY;
-    int n = 0;
-    *arr = malloc(capacity * sizeof(int));
-    if (!*arr) return -1;
-
-    int temp;
-    while (fscanf(f, "%d", &temp) == 1) {
-        if (n >= capacity) {
-            capacity *= 2;
-            int *tmp = realloc(*arr, capacity * sizeof(int));
-            if (!tmp) return -1;
-            *arr = tmp;
-        }
-        *(*arr + n) = temp;
-        n++;
-    }
-
-    fclose(f);
-    return n;
-}
-
-/* ---------- MAIN I/O FUNCTION ---------- */
 int IO(int argc, char *argv[]) {
 
     //SetConsoleOutputCP(CP_UTF8);
 
-    int *arr = NULL;
-    int n = 0;
-
-    /* ---------- INPUT ---------- */
-    if (argc == 1) {
-        n = read_input(&arr);
-    } else {
-        n = read_file("unsorted.txt", &arr);
-        if (n > 0) {
-            printf("\nпредыдущий массив:\n");
-            for (int i = 0; i < n; i++) {
-                printf("%d ", *(arr + i));
-            }
-            printf("\n\n");
-        }
-
-        n = read_file("sorted.txt", &arr);
-        if (n > 0) {
-            printf("предыдущий отсортированный массив:\n");
-            for (int i = 0; i < n; i++) {
-                printf("%d ", *(arr + i));
-            }
-            printf("\n\n");
-        }
-
-        n = read_file(argv[1], &arr);
-        if (n < 0) return 1;
-    }
-
-    if (n == 0) {
-        printf("Данные не предоставлены.\n\n");
-        free(arr);
-        return IO(argc, argv);
-    }
-
-    /* ---------- SAVE ORIGINAL ---------- */
-    save_array("unsorted.txt", arr, n);
-
-    /* ---------- STACK ---------- */
     Stack s;
-    stack_init(&s, n); // ensure stack allocates dynamically
-    for (int i = 0; i < n; i++) {
-        stack_push(&s, *(arr + i));
+    stack_init(&s);
+
+    if (argc == 1) read_input(&s);
+    else{
+	 read_file(argv[1], &s);
+	    printf("предыдущий стек:\n");
+	    FILE *file_pointer;
+	    int number;
+	    file_pointer = fopen("unsorted.txt", "r");
+	    if (file_pointer == NULL) {
+	        printf("Error: Could not open the file unsorted.txt\n");
+	        exit(1);
+	    }
+	    while (fscanf(file_pointer, "%d", &number) == 1) {
+	        printf("%d ", number); 
+	    }
+	    fclose(file_pointer);
+	}
+
+    if (stack_is_empty(&s)) {
+        printf("Данные не предоставлены.\n");
+        return 0;
     }
 
-    /* ---------- TIMING ---------- */
-    double t_ins = measure_insertion(arr, n);
-    double t_mer = measure_merge(arr, n);
-
-    /* ---------- SORTED ARRAY ---------- */
-    int *sorted = malloc(n * sizeof(int));
-    if (!sorted) {
-        free(arr);
-        free(s.data);
-        return -1;
+    printf("\nмассив в стеке:\n");
+    Stack tmp;
+    stack_init(&tmp);
+    while (!stack_is_empty(&s)) {
+        int val = stack_pop(&s);
+        printf("%d ", val);
+        stack_push(&tmp, val);
     }
-    memcpy(sorted, arr, n * sizeof(int));
-    insertion_sort(sorted, n);
-    save_array("sorted.txt", sorted, n);
+    while (!stack_is_empty(&tmp)) stack_push(&s, stack_pop(&tmp));
+    printf("\n");
 
-    /* ---------- OUTPUT ---------- */
+    // Save unsorted
+    save_stack("unsorted.txt", &s);
+
+    // Timing
+    double t_ins = measure_insertion(&s);
+    double t_mer = measure_merge(&s);
+
+    // Sort and save sorted
+    Stack sorted;
+    stack_init(&sorted);
+    while (!stack_is_empty(&s)) stack_push(&sorted, stack_pop(&s));
+
+    insertion_sort_stack(&sorted);
+    save_stack("sorted.txt", &sorted);
+
+    printf("\nОтсортированный массив:\n");
+    Stack tmp2;
+    stack_init(&tmp2);
+    while (!stack_is_empty(&sorted)) {
+        int val = stack_pop(&sorted);
+        printf("%d ", val);
+        stack_push(&tmp2, val);
+    }
+    while (!stack_is_empty(&tmp2)) stack_push(&sorted, stack_pop(&tmp2));
+    printf("\n\n");
+
+    printf("Время сортировки вставки: %.6f s\n", t_ins);
+    printf("Время сортировки слиянием: %.6f s\n", t_mer);
+
+    // Repeat if no argv
     if (argc == 1) {
-        printf("\nотсортированные числа:\n");
-        for (int i = 0; i < n; i++) {
-            printf("%d ", *(sorted + i));
-        }
-        printf("\n\n");
-
-        printf("Время сортировки вставки: %.6f s\n", t_ins);
-        printf("Время сортировки при слиянии: %.6f s\n", t_mer);
-
-        /* ---------- REPEAT ---------- */
-        printf("\nповторить?? (y/n): ");
+        printf("\nПовторить? (y/n): ");
         char c;
         scanf(" %c", &c);
         clear_input_buffer();
-        if (c == 'y' || c == 'Y') {
-            free(arr);
-            free(sorted);
-            free(s.data);
-            return IO(argc, argv);
-        }
-    } else {
-        printf("отсортированный массив из файла:\n");
-        for (int i = 0; i < n; i++) {
-            printf("%d ", *(sorted + i));
-        }
-        printf("\nколичество элементов[%d]\nвремя вставки составляет [%.6f] Время слияния составляет [%.6f]\n",
-               n, t_ins, t_mer);
+        if (c == 'y' || c == 'Y') return IO(argc, argv);
     }
 
-    free(arr);
-    free(sorted);
-    free(s.data);
+    stack_free(&s);
+    stack_free(&sorted);
 
     return 0;
 }

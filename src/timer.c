@@ -1,40 +1,47 @@
-#include <stdlib.h>
-#include <string.h>
 #include <time.h>
-
 #include "timer.h"
 #include "sort.h"
+#include "stack.h"
 
-double measure_insertion(const int *arr, int n) {
-    int *tmp = malloc(n * sizeof(int));
-    if (!tmp) {
-        return -1.0;
+double measure_insertion(Stack *s) {
+    Stack copy;
+    stack_init(&copy);
+
+    // Copy stack
+    Stack tmp;
+    stack_init(&tmp);
+    while (!stack_is_empty(s)) {
+        int val = stack_pop(s);
+        stack_push(&tmp, val);
+        stack_push(&copy, val);
     }
-
-    memcpy(tmp, arr, n * sizeof(int));
+    while (!stack_is_empty(&tmp)) stack_push(s, stack_pop(&tmp));
 
     clock_t start = clock();
-    insertion_sort(tmp, n);
+    insertion_sort_stack(&copy);
     clock_t end = clock();
 
-    free(tmp);
-
+    stack_free(&copy);
     return (double)(end - start) / CLOCKS_PER_SEC;
 }
 
-double measure_merge(const int *arr, int n) {
-    int *tmp = malloc(n * sizeof(int));
-    if (!tmp) {
-        return -1.0;
-    }
+double measure_merge(Stack *s) {
+    Stack copy;
+    stack_init(&copy);
 
-    memcpy(tmp, arr, n * sizeof(int));
+    Stack tmp;
+    stack_init(&tmp);
+    while (!stack_is_empty(s)) {
+        int val = stack_pop(s);
+        stack_push(&tmp, val);
+        stack_push(&copy, val);
+    }
+    while (!stack_is_empty(&tmp)) stack_push(s, stack_pop(&tmp));
 
     clock_t start = clock();
-    merge_sort(tmp, 0, n - 1);
+    merge_sort_stack(&copy);
     clock_t end = clock();
 
-    free(tmp);
-
+    stack_free(&copy);
     return (double)(end - start) / CLOCKS_PER_SEC;
 }

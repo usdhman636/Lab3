@@ -1,11 +1,12 @@
 #ifndef SORT_H
 #define SORT_H
 
+#include "stack.h"
 
-void insertion_sort(int *arr, int n);
+// Insertion sort stack
+void insertion_sort_stack(Stack *s);
 
-void merge(int *arr, int left, int mid, int right);
-
-void merge_sort(int *arr, int left, int right);
+// Merge sort stack
+void merge_sort_stack(Stack *s);
 
 #endif
