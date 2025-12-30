@@ -1,7 +1,5 @@
-#include <stdio.h>
 #include "io.h"
 
-int main(int argc, char *argv[]) {
-    IO(argc, argv);
-    return 0;
+int main(int argc, char **argv) {
+    return IO(argc, argv);
 }
