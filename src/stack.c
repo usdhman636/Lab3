@@ -9,6 +9,8 @@ int stack_is_empty(Stack *s) {
     return s->top == NULL;
 }
 
+// Pushes a new value onto the top of the stack by
+// creating a new node
 void stack_push(Stack *s, int value) {
     Node *n = malloc(sizeof(Node));
     n->data = value;
@@ -16,6 +18,8 @@ void stack_push(Stack *s, int value) {
     s->top = n;
 }
 
+// Pops the top node from the stack and returns 
+//it without freeing it.
 Node *stack_pop_node(Stack *s) {
     if (!s->top) return NULL;
     Node *n = s->top;
@@ -24,6 +28,8 @@ Node *stack_pop_node(Stack *s) {
     return n;
 }
 
+// Pushes an existing node onto the top of the 
+//stack without creating a new node.
 void stack_push_node(Stack *s, Node *n) {
     if (!n) return;
     n->next = s->top;

@@ -41,6 +41,19 @@ static void read_file(const char *name, Stack *s) {
     fclose(f);
 }
 
+
+void stack_reverse(Stack *s) {
+    Stack tmp;
+    stack_init(&tmp);
+
+    while (!stack_is_empty(s)) {
+        stack_push_node(&tmp, stack_pop_node(s));
+    }
+
+    s->top = tmp.top;
+}
+
+
 int IO(int argc, char **argv) {
     Stack s;
     stack_init(&s);
@@ -70,7 +83,9 @@ int IO(int argc, char **argv) {
         return 0;
     }
 
-    save_stack("unsorted.txt", &s);
+    Stack tmp_reverse = copy_stack(&s);
+    stack_reverse(&tmp_reverse);
+    save_stack("unsorted.txt", &tmp_reverse);
 
     double ti = measure_insertion(&s);
     double tm = measure_merge(&s);
@@ -92,6 +107,7 @@ int IO(int argc, char **argv) {
             return IO(argc, argv);
     }
 
+    stack_free(&tmp_reverse);
     stack_free(&s);
     return 0;
 }

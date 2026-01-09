@@ -2,7 +2,7 @@
 #include "timer.h"
 #include "sort.h"
 
-static Stack copy_stack(Stack *s) {
+Stack copy_stack(Stack *s) {
     Stack tmp, copy;
     stack_init(&tmp);
     stack_init(&copy);
