@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+//#include <windows.h>
 #include "io.h"
 #include "stack.h"
 #include "sort.h"
@@ -55,13 +56,33 @@ void stack_reverse(Stack *s) {
 
 
 int IO(int argc, char **argv) {
+   // SetConsoleOutputCP(CP_UTF8);
+   // SetConsoleCP(CP_UTF8);
     Stack s;
     stack_init(&s);
 
     if (argc == 1)
         read_input(&s);
     else{
-        read_file(argv[1], &s);
+           char *txtFile = NULL;
+           int found = 0;  // 0 = false, 1 = true
+        
+        for (int i = 1; i < argc; i++) {
+            size_t len = strlen(argv[i]);
+            if (len >= 4 && strcmp(argv[i] + len - 4, ".txt") == 0) {
+                txtFile = argv[i];
+                found = 1;
+                break;
+            }
+        }
+            
+        if (found) {
+            read_file(txtFile, &s);
+        } else {
+            // No .txt file found
+            read_file(argv[1], &s);
+          }
+    
 	printf("\nпредыдущий стек\n");
 	FILE *file_pointer;
 	int number;
