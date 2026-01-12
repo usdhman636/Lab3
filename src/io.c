@@ -25,20 +25,25 @@ static void save_stack(const char *name, Stack *s) {
     fclose(f);
 }
 
-static void read_input(Stack *s) {
+static void read_input(Stack *s, int *elementsNum) {
     int x;
     printf("Введите числа через пробел (Ctrl+D чтобы закончить):\n");
-    while (scanf("%d", &x) == 1) {stack_push(s, x);}
+    while (scanf("%d", &x) == 1) {
+	stack_push(s, x);
+	*elementsNum += 1;
+	}
 
 	clearInputBuffer();
 }
 
-static void read_file(const char *name, Stack *s) {
+static void read_file(const char *name, Stack *s, int *elementsNum) {
     FILE *f = fopen(name, "r");
     int x;
     if (!f) return;
-    while (fscanf(f, "%d", &x) == 1)
+    while (fscanf(f, "%d", &x) == 1){
         stack_push(s, x);
+	*elementsNum +=1;
+    }
     fclose(f);
 }
 
@@ -55,14 +60,40 @@ void stack_reverse(Stack *s) {
 }
 
 
+int stack_edit_by_index(Stack *s, int index, int new_value, int *elementsNum) {
+
+    if(index < 1 || index > *elementsNum){
+	printf("\n!неверный элемент!\n\n");
+	*elementsNum = -1;
+	return 0;
+}
+    Node *curr = s->top;
+    int current_index = 1;
+
+    while (curr != NULL) {
+        if (current_index == index) {
+            curr->data = new_value;  // change value
+            return 1;                // success
+        }
+        curr = curr->next;
+        current_index++;
+    }
+ return 0;
+}
+
+
 int IO(int argc, char **argv) {
    // SetConsoleOutputCP(CP_UTF8);
    // SetConsoleCP(CP_UTF8);
     Stack s;
     stack_init(&s);
+    int option = 6;
+    int elementsNum = 0;
+    int index = 1;
+    int value = 0;
 
     if (argc == 1)
-        read_input(&s);
+        read_input(&s, &elementsNum);
     else{
            char *txtFile = NULL;
            int found = 0;  // 0 = false, 1 = true
@@ -77,10 +108,10 @@ int IO(int argc, char **argv) {
         }
             
         if (found) {
-            read_file(txtFile, &s);
+            read_file(txtFile, &s, &elementsNum);
         } else {
             // No .txt file found
-            read_file(argv[1], &s);
+            read_file(argv[1], &s, &elementsNum);
           }
     
 	printf("\nпредыдущий стек\n");
@@ -114,18 +145,129 @@ int IO(int argc, char **argv) {
     merge_sort_stack(&s);
     save_stack("sorted.txt", &s);
 
-    printf("Отсортированный массив:\n");
+    printf("Отсортированный стек:\n");
     print_stack(&s);
+    printf("количество элементов: %d\n", elementsNum);
     printf("Время сортировки вставки: %.6f s\n", ti);
     printf("Время сортировки слиянием: %.6f s\n", tm);
 
     if (argc == 1) {
-        printf("Повторить? (y/n): ");
-        char c;
-        scanf(" %c", &c);
-	clearInputBuffer();
-        if (c == 'y' || c == 'Y')
-            return IO(argc, argv);
+	do{
+	   printf("Выберите вариант: (Если иначе, то выход)");
+	   printf("\n0)сортировка");
+	   printf("\n1)вставка");
+  	   printf("\n2)удаление");
+	   printf("\n3)вывод списка");
+	   printf("\n4)Редактирование значения элемента по его номеру");
+	   printf("\n5)повторить программу");
+	   printf("\n6)выход\n");
+           if(scanf(" %d", &option) != 1){
+		clearInputBuffer();
+		option = 6;
+	   }
+	   if (option == 0){
+		elementsNum = 0;
+		stack_free(&s);
+		stack_init(&s);
+		read_file("unsorted.txt", &s, &elementsNum);
+		double ti = measure_insertion(&s);
+    		double tm = measure_merge(&s);
+    		merge_sort_stack(&s);
+    		save_stack("sorted.txt", &s);
+
+    		printf("Отсортированный стек:\n");
+    		print_stack(&s);
+    		printf("количество элементов: %d\n", elementsNum);
+    		printf("Время сортировки вставки: %.6f s\n", ti);
+    		printf("Время сортировки слиянием: %.6f s\n", tm);
+}
+	  else  if (option == 1){
+		int addToStack = 0;
+		elementsNum = 0;
+	   	printf("введите число: ");
+		if(scanf("%d", &addToStack) != 1){
+			clearInputBuffer();
+			addToStack = 0;}
+                stack_free(&s);
+		stack_free(&tmp_reverse);
+		stack_init(&s);
+		read_file("unsorted.txt", &s, &elementsNum);
+		tmp_reverse = copy_stack(&s);
+    		stack_reverse(&tmp_reverse);
+		stack_free(&s);
+		s = copy_stack(&tmp_reverse);
+		stack_push(&s, addToStack);
+    		save_stack("unsorted.txt", &s);
+		printf("стек после вставки:\n");
+		print_stack(&s);
+		elementsNum += 1;
+	   }
+           else if (option == 2){
+		elementsNum = 0;
+		stack_free(&tmp_reverse);
+                stack_free(&s);
+		stack_init(&s);
+                read_file("unsorted.txt", &s, &elementsNum);
+		tmp_reverse = copy_stack(&s);
+    		stack_reverse(&tmp_reverse);
+		stack_free(&s);
+		s = copy_stack(&tmp_reverse);
+		if (!stack_is_empty(&s)) {
+ 		       free(stack_pop_node(&s));
+		       elementsNum -= 1;
+		}
+    		save_stack("unsorted.txt", &s);
+		printf("стек после удаление:\n");
+                print_stack(&s);
+	   }
+	   else if (option == 3){
+		elementsNum = 0;
+                stack_free(&s);
+		stack_free(&tmp_reverse);
+                stack_init(&s);
+                read_file("unsorted.txt", &s, &elementsNum);
+		tmp_reverse = copy_stack(&s);
+    		stack_reverse(&tmp_reverse);
+		print_stack(&tmp_reverse);
+	   }
+	   else if (option == 4){
+			elementsNum = 0;
+               		stack_free(&tmp_reverse);
+                	stack_free(&s);
+                	stack_init(&s);
+                	read_file("unsorted.txt", &s, &elementsNum);
+                	tmp_reverse = copy_stack(&s);
+                	stack_reverse(&tmp_reverse);
+                	stack_free(&s);
+                	s = copy_stack(&tmp_reverse);
+			printf("количество элементов: %d\n", elementsNum);
+			printf("Выберите какой элемент вы хотите изменить: ");
+			if (scanf("%d", &index) !=1){
+			   clearInputBuffer();
+			   index = -1;
+			}
+			printf("выберите новое значение элемента: ");
+			if (scanf("%d", &value) !=1){
+			   clearInputBuffer();
+			   value = 0;
+			}
+			stack_edit_by_index(&s, index, value, &elementsNum);
+			save_stack("unsorted.txt", &s);
+			if (elementsNum != -1){
+                        	printf("стек после изменение значение:\n");
+				print_stack(&s);
+			}
+	   }
+	   else if (option == 5){
+			stack_free(&tmp_reverse);
+	    		stack_free(&s);
+			return IO(argc, argv);
+		}else{
+		     stack_free(&tmp_reverse);
+	             stack_free(&s);
+		     return 0;
+		}
+	}while(option != 6);
     }
 
     stack_free(&tmp_reverse);
