@@ -132,7 +132,6 @@ int IO(int argc, char **argv) {
 
     if (stack_is_empty(&s)) {
         printf("Нет данных\n");
-        return 0;
     }
 
     Stack tmp_reverse = copy_stack(&s);
@@ -215,10 +214,13 @@ int IO(int argc, char **argv) {
 		if (!stack_is_empty(&s)) {
  		       free(stack_pop_node(&s));
 		       elementsNum -= 1;
-		}
+		       save_stack("unsorted.txt", &s);
+               	       printf("стек после удаление:\n");
+                       print_stack(&s);
+		}else {
     		save_stack("unsorted.txt", &s);
-		printf("стек после удаление:\n");
-                print_stack(&s);
+		printf("стек пустой\n");
+                }
 	   }
 	   else if (option == 3){
 		elementsNum = 0;

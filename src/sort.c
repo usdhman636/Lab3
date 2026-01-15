@@ -24,7 +24,7 @@ void insertion_sort_stack(Stack *s) {
 
 /* -------- MERGE SORT (node-based) -------- */
 
-static Node *merge(Node *a, Node *b) {
+/*static Node *merge(Node *a, Node *b) {
     Node dummy;
     Node *tail = &dummy;
     dummy.next = NULL;
@@ -67,4 +67,58 @@ static Node *merge_sort_nodes(Node *head) {
 
 void merge_sort_stack(Stack *s) {
     s->top = merge_sort_nodes(s->top);
+}
+*/
+
+void split_stack(Stack *src, Stack *a, Stack *b) {
+    int toggle = 0;
+    while (!stack_is_empty(src)) {
+        if (toggle)
+            stack_push_node(a, stack_pop_node(src));
+        else
+            stack_push_node(b, stack_pop_node(src));
+        toggle = !toggle;
+    }
+}
+
+Stack merge_stacks(Stack *a, Stack *b) {
+    Stack tmp, result;
+    stack_init(&tmp);
+    stack_init(&result);
+
+    while (!stack_is_empty(a) && !stack_is_empty(b)) {
+        if (a->top->data <= b->top->data)
+            stack_push_node(&tmp, stack_pop_node(a));
+        else
+            stack_push_node(&tmp, stack_pop_node(b));
+    }
+
+    while (!stack_is_empty(a))
+        stack_push_node(&tmp, stack_pop_node(a));
+
+    while (!stack_is_empty(b))
+        stack_push_node(&tmp, stack_pop_node(b));
+
+    /* reverse tmp into result */
+    while (!stack_is_empty(&tmp))
+        stack_push_node(&result, stack_pop_node(&tmp));
+
+    return result;
+}
+
+void merge_sort_stack(Stack *s) {
+    if (!s->top || !s->top->next)
+        return;
+
+    Stack a, b;
+    stack_init(&a);
+    stack_init(&b);
+
+    split_stack(s, &a, &b);
+
+    merge_sort_stack(&a);
+    merge_sort_stack(&b);
+
+    Stack merged = merge_stacks(&a, &b);
+    *s = merged;
 }
