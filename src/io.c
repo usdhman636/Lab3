@@ -27,7 +27,7 @@ static void save_stack(const char *name, Stack *s) {
 
 static void read_input(Stack *s, int *elementsNum) {
     int x;
-    printf("Введите числа через пробел (Ctrl+D чтобы закончить):\n");
+    printf("Введите числа через пробел (любую букву + enter чтобы закончить):\n");
     while (scanf("%d", &x) == 1) {
 	stack_push(s, x);
 	*elementsNum += 1;
