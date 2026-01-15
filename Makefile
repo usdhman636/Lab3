@@ -17,7 +17,7 @@ run: program
 
 #for windows cmd
 #run.exe: main.c stack.c sort.c io.c timer.c stack.h sort.h io.h timer.h
-  #gcc -Wall -Wextra -std=c99 -o labadam.exe main.c stack.c sort.c io.c timer.c
+  #gcc -Wall -Wextra -std=c99 -o run.exe main.c stack.c sort.c io.c timer.c
 
 #clean:
   #del /Q *.o *.exe
